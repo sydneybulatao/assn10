@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+    <title>Author API</title>
+    <meta charset="utf-8"/> 
+    <link rel="stylesheet" href="style.css">  
+    <script>
+        function getAuthor() {
+            // AJAX Data Pattern 
+            request = new XMLHttpRequest();
+			console.log("1 - request object created");
+            
+            request.open("GET", "https://openlibrary.org/search/authors.json?q=rick%20riordan", true)
+            console.log("2 - opened request file");
+            
+            request.onreadystatechange = function() {
+                console.log("3 - readystatechange event fired");
+                
+                if (request.readyState == 4 && request.status == 200) {
+                    console.log("5 - response received");
+                    result = request.responseText;
+                    author = JSON.parse(result);
+                    
+                    document.getElementById("name_1").innerHTML = "Author:<br />" + author["docs"][0]["name"] + "<br /><br />";
+                    document.getElementById("book_1").innerHTML = "Most Famous Book:<br />" + author["docs"][0]["top_work"] + "<br /><br />";
+                    document.getElementById("subjects_1").innerHTML = "Top Subjects:<br />" + author["docs"][0]["top_subjects"].join(", ") + "<br /><br />";
+                    
+                }
+                else if (request.readyState == 4 && request.status != 200) {
+                    document.getElementById("data").innerHTML = "Unable to retrieve data.";
+                }
+                else if (request.readyState == 3) {
+                    document.getElementById("data").innerHTML = "Too soon! Try again.";
+                }
+            }
+            
+            request.send();
+            console.log("4 - Request sent");
+            
+            // Fetch
+            res = fetch("https://openlibrary.org/search/authors.json?q=rick%20riordan")
+            .then (res => res.text())
+            .then (data =>
+            {
+                data = JSON.parse(data);
+                document.getElementById("name_2").innerHTML = "Author:<br />" + data.docs[0].name + "<br /><br />";
+                document.getElementById("book_2").innerHTML = "Most Famous Book:<br />" + data.docs[0].top_work + "<br /><br />";
+                document.getElementById("subjects_2").innerHTML = "Top Subjects:<br />" + data.docs[0].top_subjects.join(", ") + "<br /><br />";
+            })
+            .catch (error => console.log(error))
+        }
+    </script>
+</head>
+<body onload="getAuthor()">
+    <h1>Author API</h1>
+    <h2>Using AJAX Data Pattern to Access Data</h2>
+    <div class="info">
+        <div id="name_1">
+            Loading...
+        </div>
+        <div id="book_1">
+        </div>
+        <div id="subjects_1">
+        </div>
+    </div>
+    <h2>Using Fetch to Access Data</h2>
+    <div class="info">
+        <div id="name_2">
+            Loading...
+        </div>
+        <div id="book_2">
+        </div>
+        <div id="subjects_2">
+        </div>
+    </div>
+    <h2>API Information</h2>
+    <div class=info>
+        <h3>Author API:</h3>
+        This API returns information about an author in JSON format. 
+        You can access information such as alternate names for the author, 
+        the author's birthday, the author's most famous book, and the number 
+        of books the author has written. 
+        <br />
+        <h3>Sources:</h3>
+        https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/
+        <br />
+        https://openlibrary.org/dev/docs/api/authors
+        <br />
+        <h3>Options Used for Request:</h3>
+        The first method made an instance of the request object to make the request. 
+        I used "request.open" to get the information from the URL of the API. Then I 
+        used an event handler and if statements to make sure the request was 
+        successful before trying to access the data. 
+        <br />
+        The second method was much shorter. I used "fetch" to get the information from the 
+        URL of the API. Then I used arrow functions to retrieve the data. I would use 
+        this method over the first method if I were to do this again because it was 
+        much easier and shorter. 
+        <br />
+        <h3>Applications:</h3>
+        (1) This API would be helpful for a library website. For example, if a 
+        library wanted to have a featured author of the month on their site, they could 
+        use this API to display information about the author. 
+        <br />
+        (2) This API would also be helpful for a bookstore website. For example,
+        the API could be used to see if an author has a book that is a New York Times bestseller.
+        This would allow them to display that information next to the author's name and use it to market
+        their books. 
+    </div>
+</body>
+</html>
